@@ -221,63 +221,68 @@ function CreatePost() {
 
           {/* Content */}
           <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-100 p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
               <label className="flex items-center gap-2 text-sm font-bold text-gray-700">
                 <FileText className="w-5 h-5 text-indigo-600" />
                 Content
               </label>
-              <div className="flex flex-wrap gap-2">
+              {/* AI Buttons - responsive grid */}
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-0">
                 <button
                   type="button"
                   onClick={() => handleAiAssist('improve', content)}
                   disabled={aiLoading || !content.trim()}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-500 text-white text-xs font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 bg-linear-to-r from-blue-500 to-cyan-500 text-white text-[10px] sm:text-xs font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {aiLoading && aiType === 'improve' ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" />
                   ) : (
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-3 h-3" />
                   )}
-                  Improve
+                  <span className="hidden xs:inline">Improve</span>
+                  <span className="xs:hidden">✨</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAiAssist('expand', content)}
                   disabled={aiLoading || !content.trim()}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-green-500 to-emerald-500 text-white text-xs font-semibold rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 bg-linear-to-r from-green-500 to-emerald-500 text-white text-[10px] sm:text-xs font-semibold rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {aiLoading && aiType === 'expand' ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" />
                   ) : (
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-3 h-3" />
                   )}
-                  Expand
+                  <span className="hidden xs:inline">Expand</span>
+                  <span className="xs:hidden">📝</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAiAssist('continue', content)}
                   disabled={aiLoading || !content.trim()}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-orange-500 to-red-500 text-white text-xs font-semibold rounded-lg hover:from-orange-600 hover:to-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 bg-linear-to-r from-orange-500 to-red-500 text-white text-[10px] sm:text-xs font-semibold rounded-lg hover:from-orange-600 hover:to-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {aiLoading && aiType === 'continue' ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" />
                   ) : (
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-3 h-3" />
                   )}
-                  Continue
+                  <span className="hidden xs:inline">Continue</span>
+                  <span className="xs:hidden">➡️</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAiAssist('simplify', content)}
                   disabled={aiLoading || !content.trim()}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-violet-500 to-purple-500 text-white text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 bg-linear-to-r from-violet-500 to-purple-500 text-white text-[10px] sm:text-xs font-semibold rounded-lg hover:from-violet-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {aiLoading && aiType === 'simplify' ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin" />
                   ) : (
-                    <Sparkles className="w-3.5 h-3.5" />
+                    <Sparkles className="w-3 h-3" />
                   )}
-                  Simplify
+                  <span className="hidden xs:inline">Simplify</span>
+                  <span className="xs:hidden">📖</span>
                 </button>
               </div>
             </div>

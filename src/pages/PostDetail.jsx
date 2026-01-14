@@ -276,6 +276,10 @@ function PostDetail() {
                           src={allImages[currentImageIndex]}
                           alt={`${post.title} - Image ${currentImageIndex + 1}`}
                           className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover rounded-xl transition-all duration-300"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%234f46e5"%3E%3C/stop%3E%3Cstop offset="100%25" style="stop-color:%239333ea"%3E%3C/stop%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="400" height="300" fill="url(%23grad)"%3E%3C/rect%3E%3Ctext x="50%25" y="50%25" font-size="48" fill="white" opacity="0.5" text-anchor="middle" dy=".3em"%3E📷%3C/text%3E%3C/svg%3E';
+                          }}
                         />
 
                         {/* Navigation Arrows - Only show if multiple images */}

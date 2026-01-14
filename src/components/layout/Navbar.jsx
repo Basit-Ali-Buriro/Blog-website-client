@@ -95,16 +95,14 @@ function Navbar() {
                   <span className="hidden sm:inline">Create</span>
                 </Link>
 
-                {/* Dashboard (Admin Only) */}
-                {isAdmin && (
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
-                  >
-                    <FiGrid />
-                    <span>Dashboard</span>
-                  </Link>
-                )}
+                {/* Dashboard - for all authenticated users */}
+                <Link
+                  to="/dashboard"
+                  className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+                >
+                  <FiGrid />
+                  <span>Dashboard</span>
+                </Link>
 
                 {/* Profile Dropdown */}
                 <div className="relative">
@@ -132,15 +130,6 @@ function Navbar() {
                         <p className="text-sm font-semibold text-gray-800 truncate max-w-[160px]">{user.username}</p>
                         <p className="text-xs text-gray-500 truncate max-w-[160px]">{user.email}</p>
                       </div>
-
-                      <Link
-                        to="/profile"
-                        className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100"
-                        onClick={() => setProfileDropdownOpen(false)}
-                      >
-                        <FiUser />
-                        <span>Profile</span>
-                      </Link>
 
                       <button
                         onClick={handleLogout}
@@ -229,24 +218,14 @@ function Navbar() {
                     <span>Create Post</span>
                   </Link>
 
-                  {isAdmin && (
-                    <Link
-                      to="/dashboard"
-                      className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <FiGrid />
-                      <span>Dashboard</span>
-                    </Link>
-                  )}
-
+                  {/* Dashboard - for all authenticated users */}
                   <Link
-                    to="/profile"
+                    to="/dashboard"
                     className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <FiUser />
-                    <span>Profile</span>
+                    <FiGrid />
+                    <span>Dashboard</span>
                   </Link>
 
                   <button
