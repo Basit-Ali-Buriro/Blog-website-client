@@ -13,12 +13,12 @@ import { formatDate } from '../utils/formatDate'
 function Profile() {
   const navigate = useNavigate()
   const { currentUser, setUser, loading: authLoading } = useAuth()
-  
-  
+
+
   const [userPosts, setUserPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('posts') // 'posts', 'edit', 'password'
-  
+
   // Edit Profile State
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -26,7 +26,7 @@ function Profile() {
   const [profilePic, setProfilePic] = useState(null)
   const [profilePicPreview, setProfilePicPreview] = useState('')
   const [editLoading, setEditLoading] = useState(false)
-  
+
   // Change Password State
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -43,7 +43,7 @@ function Profile() {
   useEffect(() => {
     // Wait for auth to load
     if (authLoading) return
-    
+
     if (!currentUser) {
       toast.error('Please login to access your profile')
       navigate('/login')
@@ -62,17 +62,17 @@ function Profile() {
   const fetchUserPosts = async () => {
     const userId = currentUser?._id || currentUser?.id
     if (!userId) return
-    
+
     try {
       setLoading(true)
       const response = await postService.getPostsByAuthor(userId)
       const posts = response.posts || response
       setUserPosts(posts)
-      
+
       // Calculate stats
       const totalLikes = posts.reduce((sum, post) => sum + (post.likes?.length || 0), 0)
       const totalComments = posts.reduce((sum, post) => sum + (post.commentsCount || 0), 0)
-      
+
       setStats({
         totalPosts: posts.length,
         totalLikes,
@@ -95,7 +95,7 @@ function Profile() {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault()
-    
+
     if (!username.trim()) {
       toast.error('Username is required')
       return
@@ -118,10 +118,10 @@ function Profile() {
       }
 
       const response = await authService.updateProfile(formData)
-      
+
       // Update context
       setUser(response.user)
-      
+
       toast.dismiss(loadingToast)
       toast.success('Profile updated successfully! 🎉')
       setActiveTab('posts')
@@ -161,7 +161,7 @@ function Profile() {
 
       toast.dismiss(loadingToast)
       toast.success('Password changed successfully! 🔐')
-      
+
       // Clear form
       setCurrentPassword('')
       setNewPassword('')
@@ -193,7 +193,7 @@ function Profile() {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-indigo-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-100 p-6 sm:p-8 mb-8">
@@ -226,26 +226,26 @@ function Profile() {
             </div>
 
             {/* Stats */}
-            <div className="flex gap-6 sm:gap-8">
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-indigo-600">
+            <div className="flex flex-wrap justify-center sm:justify-start gap-4 sm:gap-6 md:gap-8 w-full sm:w-auto">
+              <div className="text-center min-w-[60px]">
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-600">
                   {stats.totalPosts}
                 </div>
-                <div className="text-sm text-gray-600">Posts</div>
+                <div className="text-xs sm:text-sm text-gray-600">Posts</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-pink-600 flex items-center gap-1">
-                  <Heart className="w-6 h-6 fill-current" />
+              <div className="text-center min-w-[60px]">
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-pink-600 flex items-center justify-center gap-1">
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 fill-current" />
                   {stats.totalLikes}
                 </div>
-                <div className="text-sm text-gray-600">Likes</div>
+                <div className="text-xs sm:text-sm text-gray-600">Likes</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-blue-600 flex items-center gap-1">
-                  <MessageSquare className="w-6 h-6" />
+              <div className="text-center min-w-[60px]">
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 flex items-center justify-center gap-1">
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
                   {stats.totalComments}
                 </div>
-                <div className="text-sm text-gray-600">Comments</div>
+                <div className="text-xs sm:text-sm text-gray-600">Comments</div>
               </div>
             </div>
           </div>
@@ -256,32 +256,29 @@ function Profile() {
           <div className="flex border-b-2 border-gray-100">
             <button
               onClick={() => setActiveTab('posts')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors ${
-                activeTab === 'posts'
+              className={`flex-1 px-6 py-4 font-semibold transition-colors ${activeTab === 'posts'
                   ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-0.5'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               My Posts
             </button>
             <button
               onClick={() => setActiveTab('edit')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
-                activeTab === 'edit'
+              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${activeTab === 'edit'
                   ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-0.5'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               <Edit3 className="w-4 h-4" />
               Edit Profile
             </button>
             <button
               onClick={() => setActiveTab('password')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
-                activeTab === 'password'
+              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${activeTab === 'password'
                   ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-0.5'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               <Key className="w-4 h-4" />
               Change Password

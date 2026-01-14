@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { Heart, MessageCircle, Share2, Edit, Trash2, Calendar, User, Tag, ArrowLeft } from 'lucide-react'
+import { Heart, MessageCircle, Share2, Edit, Trash2, Calendar, User, Tag, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 import { formatDate } from '../utils/formatDate'
@@ -28,6 +28,9 @@ function PostDetail() {
   const [newComment, setNewComment] = useState('')
   const [commentLoading, setCommentLoading] = useState(false)
 
+  // Image carousel state
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -39,7 +42,7 @@ function PostDetail() {
 
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load post')
-      }finally{
+      } finally {
         setLoading(false)
       }
     }
@@ -47,7 +50,7 @@ function PostDetail() {
   }, [id])
 
   useEffect(() => {
-    
+
     const fetchComments = async () => {
       try {
         const data = await commentService.getCommentsByPost(id)
@@ -57,9 +60,9 @@ function PostDetail() {
       }
     }
     if (post) fetchComments()
-  
+
   }, [id, post])
-  
+
   useEffect(() => {
     const fetchRelated = async () => {
       try {
@@ -69,23 +72,23 @@ function PostDetail() {
         console.error('Failed to fetch related posts:', error)
       }
     }
-    if(post?.category) fetchRelated()
+    if (post?.category) fetchRelated()
   }, [id, post])
-  
+
 
   const handleLike = async () => {
     if (!currentUser) {
       navigate('/login')
       return
     }
-    
+
     try {
       setIsLiked(!isLiked)
       setLikeCount(isLiked ? likeCount - 1 : likeCount + 1)
       await postService.toggleLike(id)
     } catch (error) {
       setIsLiked(!isLiked)
-      setLikeCount(isLiked ? likeCount + 1 : likeCount -1)
+      setLikeCount(isLiked ? likeCount + 1 : likeCount - 1)
       console.error('Failed to like post:', error)
     }
   }
@@ -96,12 +99,12 @@ function PostDetail() {
       navigate('/login')
       return
     }
-    if(!newComment.trim()) return
-    
+    if (!newComment.trim()) return
+
     try {
       setCommentLoading(true)
       console.log('Submitting comment for post:', id)
-      const data = await commentService.addComment(id, {content : newComment})
+      const data = await commentService.addComment(id, { content: newComment })
       console.log('Comment created:', data)
       setComments([data.comment, ...comments])
       setNewComment('')
@@ -109,13 +112,13 @@ function PostDetail() {
       console.error('Failed to post comment:', error)
       console.error('Error response:', error.response?.data)
       alert(`Failed to post comment: ${error.response?.data?.message || error.message}`)
-    }finally{
+    } finally {
       setCommentLoading(false)
     }
   }
 
   const handleDelete = async () => {
-    if(!window.confirm('Are you sure you want to delete this post?')) return
+    if (!window.confirm('Are you sure you want to delete this post?')) return
 
     try {
       await postService.deletePost(id)
@@ -123,7 +126,7 @@ function PostDetail() {
     } catch (error) {
       alert('Failed to delete post')
     }
-    
+
   }
 
 
@@ -172,7 +175,7 @@ function PostDetail() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <button
@@ -202,17 +205,17 @@ function PostDetail() {
                 </h1>
 
                 {/* Author Info */}
-                <div className="flex items-center gap-4 pb-6 border-b border-gray-200">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4 pb-6 border-b border-gray-200">
                   <img
                     src={post?.author?.profilePic || 'https://ui-avatars.com/api/?name=Author'}
                     alt={post?.author?.username}
-                    className="w-12 h-12 rounded-full border-2 border-indigo-200"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-indigo-200 shrink-0"
                   />
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">{post?.author?.username || 'Author Name'}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 truncate">{post?.author?.username || 'Author Name'}</p>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                         {post?.createdAt ? formatDate(post.createdAt) : 'Jan 1, 2025'}
                       </span>
                       <span>5 min read</span>
@@ -221,36 +224,102 @@ function PostDetail() {
 
                   {/* Author Actions (Edit/Delete) */}
                   {currentUser && ((currentUser._id || currentUser.id) === (post?.author?._id || post?.author?.id) || currentUser.role === 'admin') && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => navigate(`/edit/${id}`)}
-                      className="flex items-center gap-2 px-4 py-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors font-semibold"
-                      title="Edit post"
-                    >
-                      <Edit className="w-4 h-4" />
-                      <span className="hidden sm:inline">Edit</span>
-                    </button>
-                    <button
-                      onClick={handleDelete}
-                      className="flex items-center gap-2 px-4 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors font-semibold"
-                      title="Delete post"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </button>
-                  </div>
+                    <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
+                      <button
+                        onClick={() => navigate(`/edit/${id}`)}
+                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors font-semibold text-sm"
+                        title="Edit post"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span className="hidden xs:inline sm:inline">Edit</span>
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors font-semibold text-sm"
+                        title="Delete post"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="hidden xs:inline sm:inline">Delete</span>
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Featured Image */}
-              {post?.thumbnail && (
-                <div className="px-6 sm:px-8 pt-6">
-                  <img
-                    src={post.thumbnail}
-                    alt={post.title}
-                    className="w-full h-64 sm:h-96 object-cover rounded-xl"
-                  />
+              {/* Featured Images Carousel */}
+              {(post?.thumbnail || (post?.images && post.images.length > 0)) && (
+                <div className="px-4 sm:px-6 md:px-8 pt-6">
+                  {(() => {
+                    // Combine thumbnail with images array, avoiding duplicates
+                    const allImages = [];
+                    if (post.thumbnail) allImages.push(post.thumbnail);
+                    if (post.images && post.images.length > 0) {
+                      post.images.forEach(img => {
+                        if (!allImages.includes(img)) allImages.push(img);
+                      });
+                    }
+
+                    const hasMultipleImages = allImages.length > 1;
+
+                    const nextImage = () => {
+                      setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+                    };
+
+                    const prevImage = () => {
+                      setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+                    };
+
+                    return (
+                      <div className="relative group">
+                        {/* Main Image */}
+                        <img
+                          src={allImages[currentImageIndex]}
+                          alt={`${post.title} - Image ${currentImageIndex + 1}`}
+                          className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover rounded-xl transition-all duration-300"
+                        />
+
+                        {/* Navigation Arrows - Only show if multiple images */}
+                        {hasMultipleImages && (
+                          <>
+                            <button
+                              onClick={prevImage}
+                              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
+                              aria-label="Previous image"
+                            >
+                              <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
+                            </button>
+                            <button
+                              onClick={nextImage}
+                              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 sm:p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm"
+                              aria-label="Next image"
+                            >
+                              <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
+                            </button>
+
+                            {/* Dot Indicators */}
+                            <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2">
+                              {allImages.map((_, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => setCurrentImageIndex(index)}
+                                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${index === currentImageIndex
+                                    ? 'bg-white scale-125'
+                                    : 'bg-white/50 hover:bg-white/75'
+                                    }`}
+                                  aria-label={`Go to image ${index + 1}`}
+                                />
+                              ))}
+                            </div>
+
+                            {/* Image Counter */}
+                            <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-black/50 text-white text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full backdrop-blur-sm">
+                              {currentImageIndex + 1} / {allImages.length}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
@@ -286,11 +355,10 @@ function PostDetail() {
                     {/* Like Button */}
                     <button
                       onClick={handleLike}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all ${
-                        isLiked
-                          ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all ${isLiked
+                        ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
                     >
                       <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
                       <span>{likeCount || 0}</span>

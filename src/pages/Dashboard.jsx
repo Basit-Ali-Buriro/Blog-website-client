@@ -12,10 +12,10 @@ import { formatDate } from '../utils/formatDate'
 function Dashboard() {
   const navigate = useNavigate()
   const { currentUser, loading: authLoading } = useAuth()
-  
+
   const [activeTab, setActiveTab] = useState('overview') // 'overview', 'posts', 'categories'
   const [loading, setLoading] = useState(true)
-  
+
   // Stats
   const [stats, setStats] = useState({
     totalPosts: 0,
@@ -23,11 +23,11 @@ function Dashboard() {
     draftPosts: 0,
     totalCategories: 0
   })
-  
+
   // Posts Management
   const [posts, setPosts] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  
+
   // Categories Management
   const [categories, setCategories] = useState([])
   const [newCategoryName, setNewCategoryName] = useState('')
@@ -41,32 +41,32 @@ function Dashboard() {
       console.log('⏳ Waiting for auth to load...')
       return
     }
-    
+
     if (!currentUser) {
       console.log('❌ No current user, redirecting to login')
       toast.error('Please login to access dashboard')
       navigate('/login')
       return
     }
-    
+
     console.log('✅ Current user loaded:', currentUser)
     fetchDashboardData()
   }, [currentUser, authLoading, navigate])
 
   const fetchDashboardData = async () => {
     const userId = currentUser?._id || currentUser?.id
-    
+
     if (!userId) {
       console.log('⚠️ Cannot fetch dashboard data: no user ID found')
       return
     }
-    
+
     try {
       setLoading(true)
-      
+
       console.log('📊 Fetching dashboard data for user:', userId)
       console.log('👤 User role:', currentUser?.role)
-      
+
       // Admin sees ALL posts, regular users see only their own
       let postsResponse
       if (currentUser?.role === 'admin') {
@@ -77,31 +77,31 @@ function Dashboard() {
         console.log('👤 Regular user - fetching user posts')
         postsResponse = await postService.getPostsByAuthor(userId)
       }
-      
+
       console.log('📝 Posts response:', postsResponse)
       const allPosts = postsResponse.posts || postsResponse
       console.log('📝 All posts:', allPosts)
-      
+
       // Fetch categories
       const categoriesResponse = await categoryService.getCategories()
       console.log('📁 Categories response:', categoriesResponse)
       const allCategories = categoriesResponse.categories || categoriesResponse
       console.log('📁 All categories:', allCategories)
-      
+
       setPosts(Array.isArray(allPosts) ? allPosts : [])
       setCategories(Array.isArray(allCategories) ? allCategories : [])
-      
+
       // Calculate stats
       const published = allPosts.filter(p => p.status === 'published').length
       const drafts = allPosts.filter(p => p.status === 'draft').length
-      
+
       setStats({
         totalPosts: allPosts.length,
         publishedPosts: published,
         draftPosts: drafts,
         totalCategories: allCategories.length
       })
-      
+
       console.log('✅ Dashboard data loaded successfully')
     } catch (err) {
       console.error('❌ Dashboard fetch error:', err)
@@ -114,14 +114,14 @@ function Dashboard() {
 
   const handleDeletePost = async (postId) => {
     if (!confirm('Are you sure you want to delete this post?')) return
-    
+
     try {
       const loadingToast = toast.loading('Deleting post...')
       await postService.deletePost(postId)
-      
+
       setPosts(prev => prev.filter(p => p._id !== postId))
       setStats(prev => ({ ...prev, totalPosts: prev.totalPosts - 1 }))
-      
+
       toast.dismiss(loadingToast)
       toast.success('Post deleted successfully')
     } catch (error) {
@@ -131,28 +131,28 @@ function Dashboard() {
 
   const handleCreateCategory = async (e) => {
     e.preventDefault()
-    
+
     if (!newCategoryName.trim()) {
       toast.error('Category name is required')
       return
     }
-    
+
     try {
       setCategoryLoading(true)
       const loadingToast = toast.loading('Creating category...')
-      
+
       const response = await categoryService.createCategory({
         name: newCategoryName,
         description: newCategoryDesc
       })
-      
+
       setCategories(prev => [...prev, response.category || response])
       setStats(prev => ({ ...prev, totalCategories: prev.totalCategories + 1 }))
-      
+
       // Clear form
       setNewCategoryName('')
       setNewCategoryDesc('')
-      
+
       toast.dismiss(loadingToast)
       toast.success('Category created successfully! 🎉')
     } catch (error) {
@@ -164,22 +164,22 @@ function Dashboard() {
 
   const handleUpdateCategory = async (categoryId) => {
     if (!editingCategory) return
-    
+
     try {
       setCategoryLoading(true)
       const loadingToast = toast.loading('Updating category...')
-      
+
       const response = await categoryService.updateCategory(categoryId, {
         name: editingCategory.name,
         description: editingCategory.description
       })
-      
-      setCategories(prev => prev.map(c => 
+
+      setCategories(prev => prev.map(c =>
         c._id === categoryId ? (response.category || response) : c
       ))
-      
+
       setEditingCategory(null)
-      
+
       toast.dismiss(loadingToast)
       toast.success('Category updated successfully!')
     } catch (error) {
@@ -191,14 +191,14 @@ function Dashboard() {
 
   const handleDeleteCategory = async (categoryId) => {
     if (!confirm('Are you sure? This will affect all posts in this category.')) return
-    
+
     try {
       const loadingToast = toast.loading('Deleting category...')
       await categoryService.deleteCategory(categoryId)
-      
+
       setCategories(prev => prev.filter(c => c._id !== categoryId))
       setStats(prev => ({ ...prev, totalCategories: prev.totalCategories - 1 }))
-      
+
       toast.dismiss(loadingToast)
       toast.success('Category deleted successfully')
     } catch (error) {
@@ -206,7 +206,7 @@ function Dashboard() {
     }
   }
 
-  const filteredPosts = posts.filter(post => 
+  const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
@@ -229,7 +229,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-indigo-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
         <div className="mb-8">
@@ -241,39 +241,36 @@ function Dashboard() {
 
         {/* Tabs */}
         <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-100 mb-8">
-          <div className="flex border-b-2 border-gray-100">
+          <div className="flex border-b-2 border-gray-100 overflow-x-auto">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
-                activeTab === 'overview'
+              className={`flex-1 min-w-0 px-3 sm:px-6 py-3 sm:py-4 font-semibold transition-colors flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm ${activeTab === 'overview'
                   ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-0.5'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
-              <BarChart3 className="w-4 h-4" />
-              Overview
+              <BarChart3 className="w-4 h-4 shrink-0" />
+              <span className="hidden xs:inline sm:inline">Overview</span>
             </button>
             <button
               onClick={() => setActiveTab('posts')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
-                activeTab === 'posts'
+              className={`flex-1 min-w-0 px-3 sm:px-6 py-3 sm:py-4 font-semibold transition-colors flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm ${activeTab === 'posts'
                   ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-0.5'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
-              <FileText className="w-4 h-4" />
-              Posts ({stats.totalPosts})
+              <FileText className="w-4 h-4 shrink-0" />
+              <span className="truncate">Posts ({stats.totalPosts})</span>
             </button>
             <button
               onClick={() => setActiveTab('categories')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
-                activeTab === 'categories'
+              className={`flex-1 min-w-0 px-3 sm:px-6 py-3 sm:py-4 font-semibold transition-colors flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm ${activeTab === 'categories'
                   ? 'text-indigo-600 border-b-2 border-indigo-600 -mb-0.5'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
-              <FolderPlus className="w-4 h-4" />
-              Categories ({stats.totalCategories})
+              <FolderPlus className="w-4 h-4 shrink-0" />
+              <span className="truncate">Categories ({stats.totalCategories})</span>
             </button>
           </div>
 
@@ -374,11 +371,10 @@ function Dashboard() {
                                   </span>
                                 </td>
                                 <td className="px-4 py-3">
-                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                    post.status === 'published' 
-                                      ? 'bg-green-100 text-green-700' 
+                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${post.status === 'published'
+                                      ? 'bg-green-100 text-green-700'
                                       : 'bg-orange-100 text-orange-700'
-                                  }`}>
+                                    }`}>
                                     {post.status}
                                   </span>
                                 </td>
@@ -460,13 +456,13 @@ function Dashboard() {
                               <input
                                 type="text"
                                 value={editingCategory.name}
-                                onChange={(e) => setEditingCategory({...editingCategory, name: e.target.value})}
+                                onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
                                 className="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 flex-1"
                               />
                               <input
                                 type="text"
                                 value={editingCategory.description || ''}
-                                onChange={(e) => setEditingCategory({...editingCategory, description: e.target.value})}
+                                onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
                                 placeholder="Description"
                                 className="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 flex-1"
                               />

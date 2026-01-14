@@ -10,7 +10,7 @@ import { aiService } from '../services/aiService'
 
 function CreatePost() {
   const navigate = useNavigate()
-  
+
   // Form state
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -19,7 +19,7 @@ function CreatePost() {
   const [tags, setTags] = useState('')
   const [images, setImages] = useState([])
   const [imagePreviews, setImagePreviews] = useState([])
-  
+
   // UI state
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
@@ -36,11 +36,11 @@ function CreatePost() {
       } catch (err) {
         console.error('Failed to fetch Categories:', err)
       }
-      
+
     }
-  fetchCategories()
+    fetchCategories()
   }, [])
-  
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)
     setImages(prevImages => [...prevImages, ...files])
@@ -50,12 +50,12 @@ function CreatePost() {
   }
 
 
-  const removeImage = (index) =>{
+  const removeImage = (index) => {
     setImages(prevImages => prevImages.filter((_, i) => i !== index))
     URL.revokeObjectURL(imagePreviews[index])
-    setImagePreviews(prevPreviews => prevPreviews.filter((_, i) => i !==  index))
+    setImagePreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index))
   }
-  
+
   const handleAiAssist = async (type, input) => {
     if (!input?.trim()) {
       toast.error('Please enter some content first')
@@ -91,20 +91,20 @@ function CreatePost() {
     toast.success('Applied AI suggestion! 🎉')
   }
 
-  const handleSubmit = async (e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
-    if(!title.trim()){
+    if (!title.trim()) {
       setError('Title is required')
       return
     }
-    if(!content.trim()){
+    if (!content.trim()) {
       setError('Content is required')
       return;
     }
 
-    if(!category){
+    if (!category) {
       setError('Please select a category')
       return
     }
@@ -124,7 +124,7 @@ function CreatePost() {
         tagsArray.forEach(tag => formData.append('tags[]', tag))
       }
 
-      images.forEach(image =>{
+      images.forEach(image => {
         formData.append('images', image)
       })
 
@@ -137,7 +137,7 @@ function CreatePost() {
       setError(errorMsg)
       toast.error(errorMsg)
     } finally {
-       setLoading(false)
+      setLoading(false)
     }
   }
 
@@ -148,7 +148,7 @@ function CreatePost() {
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-indigo-50">
       <Navbar />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
         <div className="mb-8">
@@ -226,7 +226,7 @@ function CreatePost() {
                 <FileText className="w-5 h-5 text-indigo-600" />
                 Content
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => handleAiAssist('improve', content)}
@@ -366,7 +366,7 @@ function CreatePost() {
               <ImageIcon className="w-5 h-5 text-indigo-600" />
               Images (Optional)
             </label>
-            
+
             {/* Upload Button */}
             <div className="relative">
               <input
@@ -400,7 +400,7 @@ function CreatePost() {
                     />
                     <button
                       type="button"
-                      onClick={() => {removeImage(index)}} // TODO: Implement removeImage(index)
+                      onClick={() => { removeImage(index) }} // TODO: Implement removeImage(index)
                       className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
                     >
                       <X className="w-4 h-4" />

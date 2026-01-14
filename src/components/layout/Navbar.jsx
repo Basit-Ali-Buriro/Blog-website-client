@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { 
-  FiSearch, 
-  FiMenu, 
-  FiX, 
-  FiEdit, 
-  FiUser, 
+import {
+  FiSearch,
+  FiMenu,
+  FiX,
+  FiEdit,
+  FiUser,
   FiLogOut,
   FiHome,
   FiTrendingUp,
@@ -38,7 +38,7 @@ function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 gap-4">
-          
+
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 shrink-0">
             <div className="bg-linear-to-r from-blue-600 to-purple-600 text-white font-bold text-lg sm:text-xl px-2 sm:px-3 py-1 rounded-lg">
@@ -51,16 +51,16 @@ function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition"
             >
               <FiHome />
               <span>Home</span>
             </Link>
-            
-            <Link 
-              to="/?trending=true" 
+
+            <Link
+              to="/?trending=true"
               className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition"
             >
               <FiTrendingUp />
@@ -129,10 +129,10 @@ function Navbar() {
                   {profileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-200">
                       <div className="px-4 py-2 border-b border-gray-200">
-                        <p className="text-sm font-semibold text-gray-800">{user.username}</p>
-                        <p className="text-xs text-gray-500">{user.email}</p>
+                        <p className="text-sm font-semibold text-gray-800 truncate max-w-[160px]">{user.username}</p>
+                        <p className="text-xs text-gray-500 truncate max-w-[160px]">{user.email}</p>
                       </div>
-                      
+
                       <Link
                         to="/profile"
                         className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -141,7 +141,7 @@ function Navbar() {
                         <FiUser />
                         <span>Profile</span>
                       </Link>
-                      
+
                       <button
                         onClick={handleLogout}
                         className="flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 w-full text-left"
@@ -208,7 +208,7 @@ function Navbar() {
                 <FiHome />
                 <span>Home</span>
               </Link>
-              
+
               <Link
                 to="/?trending=true"
                 className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
