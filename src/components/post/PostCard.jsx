@@ -109,7 +109,7 @@ function PostCard({ post }) {
             {/* Comments */}
             <div className="flex items-center gap-1.5 text-gray-600">
               <MessageCircle size={18} />
-              <span className="text-sm font-medium">{comments?.length || 0}</span>
+              <span className="text-sm font-medium">{post.commentCount || 0}</span>
             </div>
           </div>
 
